@@ -3,14 +3,15 @@ module.exports = class Game {
     id = ""
     started = false
     names = []
+    scores = []
     cats = []
 
-    constructor(options = { id: "test", started: false, names: [], cats: [] }) {
+    constructor(options = { id: "test", started: false, names: [], scores: [], cats: [] }) {
         Object.assign(this, options)
     }
 
     get to_string() {
-        let res = { id: this.id, started: this.started, names: this.names, cats: this.cats }
+        let res = { id: this.id, started: this.started, names: this.names, scores: this.scores, cats: this.cats }
         return JSON.stringify(res)
     }
 
@@ -19,6 +20,7 @@ module.exports = class Game {
             return undefined
         }
         this.names.push(name)
+        this.scores.push(0)
         return name
     }
 
