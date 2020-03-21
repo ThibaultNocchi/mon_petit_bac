@@ -10,5 +10,9 @@
   "license": "ISC",
   "devDependencies": {
     "supervisor": "^0.12.0"
+  },
+  "dependencies": {
+    "nedb": "^1.8.0",
+    "ws": "^7.2.3"
   }
 }
