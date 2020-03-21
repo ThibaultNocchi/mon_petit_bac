@@ -1,12 +1,17 @@
-module.exports = class game {
+module.exports = class Game {
 
-    _id = ""
+    id = ""
     started = false
     names = []
     cats = []
 
-    constructor(options = { _id: "test", started: false, names: [], cats: [] }) {
+    constructor(options = { id: "test", started: false, names: [], cats: [] }) {
         Object.assign(this, options)
+    }
+
+    get to_string() {
+        let res = { id: this.id, started: this.started, names: this.names, cats: this.cats }
+        return JSON.stringify(res)
     }
 
     add_name(name) {
@@ -15,6 +20,14 @@ module.exports = class game {
         }
         this.names.push(name)
         return name
+    }
+
+    add_cat(cat) {
+        if (this.cats.find(el => el === cat) != undefined) {
+            return undefined
+        }
+        this.cats.push(cat)
+        return cat
     }
 
 }

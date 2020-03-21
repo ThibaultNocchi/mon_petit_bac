@@ -1,7 +1,11 @@
-const Datastore = require('nedb')
-const db = new Datastore()
+const rs = require('randomstring')
 
-const game = require('./game')
+const Loki = require('lokijs')
+const db = new Loki()
+
+const games = db.addCollection('games', { unique: 'id' })
+
+const Game = require('./game')
 
 let connections = []
 
@@ -9,16 +13,20 @@ let find_position_connections = function (ws, game_id) {
     return connections[game_id].findIndex(el => el === ws)
 }
 
-let get_game_id_from_data = function (current_ws, data) {
+let get_game_from_data = function (data) {
     if (data === undefined || data.game_id === undefined) {
         throw 'missing_game_id'
     }
-    return data.game_id
+    let res = games.findOne({ id: data.game_id })
+    if (res === null) {
+        throw 'wrong_game_id'
+    }
+    return new Game(res)
 }
 
 let broadcast_game = function (game) {
-    connections[game._id].forEach(element => {
-        element.send(JSON.stringify(game))
+    connections[game.id].forEach(element => {
+        element.send(game.to_string)
     });
 }
 
@@ -28,17 +36,16 @@ exports.create = function (current_ws, data) {
         throw 'missing_name'
     }
 
-    let doc = new game()
-    doc.add_name(data.name)
+    // let id = rs.generate(7)
+    let id = "test"
 
-    db.insert(doc, (err, new_doc) => {
-        if (!err) {
-            connections[new_doc._id] = [current_ws]
-            broadcast_game(new_doc)
-        } else {
-            throw 'unexpected'
-        }
-    });
+    let doc = new Game()
+    doc.add_name(data.name)
+    doc.id = id
+
+    games.insert(doc)
+    connections[id] = [current_ws]
+    broadcast_game(doc)
 
 }
 
@@ -48,99 +55,70 @@ exports.connect = function (current_ws, data) {
         throw 'missing_name'
     }
 
-    let game_id = get_game_id_from_data(current_ws, data)
-    db.findOne({ _id: game_id }, function (err, doc) {
+    let game = get_game_from_data(data)
 
-        if (!doc) {
-            throw 'wrong_game_id'
-        }
+    if (game.started) {
+        throw 'game_started'
+    }
 
-        let parsed_doc = new game(doc)
-        if (parsed_doc.started) {
-            throw 'game_started'
-        }
+    if (find_position_connections(current_ws, game.id) !== -1) {
+        throw 'already_connected'
+    }
 
-        if (find_position_connections(current_ws, parsed_doc._id) !== -1) {
-            throw 'already_connected'
-        }
+    if (game.add_name(data.name) === undefined) {
+        throw 'name_taken'
+    }
+    connections[game.id].push(current_ws)
 
-        if (parsed_doc.add_name(data.name) === undefined) {
-            throw 'name_taken'
-        }
-        connections[parsed_doc._id].push(current_ws)
-
-        db.update({ _id: game_id }, { $set: { names: parsed_doc.names } }, { returnUpdatedDocs: true }, (err, numAffected, affectedDocuments, upsert) => {
-            let parsed_update = new game(affectedDocuments)
-            broadcast_game(parsed_update)
-        });
-
-    });
+    games.update(game)
+    broadcast_game(game)
 
 }
 
 exports.register_cat = function (current_ws, data) {
 
-    if (data === undefined || data.cat === undefined) {
+    if (data === undefined || data.cat === undefined || data.cat === '') {
         throw 'missing_cat'
     }
 
-    let game_id = get_game_id_from_data(current_ws, data)
-    let cat = data.cat
-    db.findOne({ _id: game_id }, function (err, doc) {
+    let game = get_game_from_data(data)
 
-        if (!doc) {
-            throw 'wrong_game_id'
-        }
+    if (game.started) {
+        throw 'game_started'
+    }
 
-        let parsed_doc = new game(doc)
-        if (parsed_doc.started) {
-            throw 'game_started'
-        }
+    let connection_pos = find_position_connections(current_ws, game.id)
+    if (connection_pos !== 0) {
+        throw 'not_game_master'
+    }
 
-        let connection_pos = find_position_connections(current_ws, parsed_doc._id)
-        if (connection_pos !== 0) {
-            throw 'not_game_master'
-        }
+    if (game.add_cat(data.cat) === undefined) {
+        throw 'cat_taken'
+    }
 
-        if (cat === '' || parsed_doc.cats.find(el => el === cat) !== undefined) {
-            throw 'invalid_cat'
-        }
-
-        db.update({ _id: game_id }, { $push: { cats: cat } }, { returnUpdatedDocs: true }, (err, numAffected, affectedDocuments, upsert) => {
-            let parsed_update = new game(affectedDocuments)
-            broadcast_game(parsed_update)
-        });
-
-    })
+    games.update(game)
+    broadcast_game(game)
 
 }
 
 exports.start_game = function (current_ws, data) {
-    let game_id = get_game_id_from_data(current_ws, data)
-    db.findOne({ _id: game_id }, function (err, doc) {
+    let game = get_game_from_data(data)
 
-        if (!doc) {
-            throw 'wrong_game_id'
-        }
+    if (game.started) {
+        throw 'game_started'
+    }
 
-        let parsed_doc = new game(doc)
-        if (parsed_doc.started) {
-            throw 'game_started'
-        }
+    let connection_pos = find_position_connections(current_ws, game.id)
+    if (connection_pos !== 0) {
+        throw 'not_game_master'
+    }
 
-        let connection_pos = find_position_connections(current_ws, parsed_doc._id)
-        if (connection_pos !== 0) {
-            throw 'not_game_master'
-        }
+    if (game.names.length === 0 || game.cats.length === 0) {
+        throw 'empty_game'
+    }
 
-        if (parsed_doc.names.length === 0 || parsed_doc.cats.length === 0) {
-            throw 'empty_game'
-        }
+    game.started = true;
+    games.update(game)
+    broadcast_game(game)
 
-        db.update({ _id: game_id }, { $set: { started: true } }, { returnUpdatedDocs: true }, (err, numAffected, affectedDocuments, upsert) => {
-            let parsed_update = new game(affectedDocuments)
-            broadcast_game(parsed_update)
-        });
-
-    })
 }
