@@ -1,0 +1,14 @@
+{
+  "name": "mon_petit_bac_back",
+  "version": "1.0.0",
+  "description": "Backend of mon_petit_bac",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Thibault Nocchi",
+  "license": "ISC",
+  "devDependencies": {
+    "supervisor": "^0.12.0"
+  }
+}
