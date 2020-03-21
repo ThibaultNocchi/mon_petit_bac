@@ -25,8 +25,9 @@ let get_game_from_data = function (data) {
 }
 
 let broadcast_game = function (game) {
+    let to_send = { type: "game", game: game.cleaned }
     connections[game.id].forEach(element => {
-        element.send(game.to_string)
+        element.send(JSON.stringify(to_send))
     });
 }
 

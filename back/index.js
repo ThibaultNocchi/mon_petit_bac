@@ -4,15 +4,23 @@ const Actions = require('./actions')
 
 const wss = new WebSocket.Server({ port: 8080 })
 
-let message_parser = function (msg, current_ws) {
-    if (!msg.action) {
-        current_ws.send(JSON.stringify({ error: 'no_action' }))
-        return
-    }
-
-    let action = msg.action
+let message_parser = function (message, current_ws) {
 
     try {
+
+        let msg = {}
+
+        try {
+            msg = JSON.parse(message)
+        } catch (error) {
+            throw 'unexpected_msg'
+        }
+
+        if (!msg.action) {
+            throw 'no_action'
+        }
+
+        let action = msg.action
 
         if (action === 'create') {
             Actions.create(current_ws, msg.data)
@@ -27,7 +35,7 @@ let message_parser = function (msg, current_ws) {
         }
 
     } catch (error) {
-        current_ws.send(JSON.stringify({ error }))
+        current_ws.send(JSON.stringify({ type: "error", error }))
     }
 
     return
@@ -37,16 +45,7 @@ wss.on('connection', function connection(ws) {
 
     ws.on('message', function incoming(message) {
         // console.log('received: %s', message)
-        let msg = {}
-
-        try {
-            msg = JSON.parse(message)
-        } catch (error) {
-            ws.send(JSON.stringify({ error: "unexpected_msg" }))
-            return
-        }
-
-        message_parser(msg, ws)
+        message_parser(message, ws)
 
     })
 

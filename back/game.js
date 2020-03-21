@@ -10,9 +10,13 @@ module.exports = class Game {
         Object.assign(this, options)
     }
 
-    get to_string() {
+    get cleaned() {
         let res = { id: this.id, started: this.started, names: this.names, scores: this.scores, cats: this.cats }
-        return JSON.stringify(res)
+        return res
+    }
+
+    get to_string() {
+        return JSON.stringify(this.cleaned)
     }
 
     add_name(name) {
