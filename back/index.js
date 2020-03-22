@@ -36,6 +36,8 @@ let message_parser = function (message, current_ws) {
             Actions.gather(current_ws, msg.data)
         } else if (action === 'validate') {
             Actions.validate(current_ws, msg.data)
+        } else if (action === 'end_round') {
+            Actions.end_round(current_ws, msg.data)
         } else {
             throw 'unrecognized_action'
         }

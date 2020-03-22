@@ -9,6 +9,16 @@ const Game = require('./game')
 
 let connections = []
 
+let count_occurences_array = function (array, comparison) {
+    let occ = 0
+    array.forEach(element => {
+        if (comparison === element) {
+            ++occ
+        }
+    })
+    return occ
+}
+
 let find_position_connections = function (ws, game_id) {
     return connections[game_id].findIndex(el => el === ws)
 }
@@ -230,5 +240,49 @@ exports.validate = function (current_ws, data) {
 
     games.update(game)
     broadcast_game(game)
+
+}
+
+exports.end_round = function (current_ws, data) {
+
+    let game = get_game_from_data(data)
+
+    if (game.game_phase !== 3) {
+        throw 'wrong_game_phase'
+    }
+
+    let connection_pos = find_position_connections(current_ws, game.id)
+    if (connection_pos !== 0) {
+        throw 'not_game_master'
+    }
+
+    let answers = []
+    for (let i = 0; i < game.cats.length; ++i) {
+        answers.push([])
+    }
+
+    for (let i = 0; i < game.cats.length; ++i) {
+        for (let j = 0; j < game.names.length; ++j) {
+            if (game.current_round[j][i].valid) {
+                answers[i].push(game.current_round[j][i].value.toLowerCase())
+            } else {
+                answers[i].push(undefined)
+            }
+        }
+    }
+
+    for (let i = 0; i < game.cats.length; ++i) {
+        for (let j = 0; j < game.names.length; ++j) {
+            if (answers[i][j] !== undefined) {
+                game.scores[j]++
+                if (count_occurences_array(answers[i], answers[i][j]) === 1) {
+                    game.scores[j]++
+                }
+            }
+        }
+    }
+
+    games.update(game)
+    module.exports.new_round(current_ws, data)
 
 }
