@@ -130,7 +130,7 @@ exports.new_round = function (current_ws, data) {
     let game = get_game_from_data(data)
 
     if (game.game_phase !== 0 && game.game_phase !== 3) {
-        throw 'cant_start_new_round'
+        throw 'wrong_game_phase'
     }
 
     let connection_pos = find_position_connections(current_ws, game.id)
@@ -203,5 +203,32 @@ exports.gather = function (current_ws, data) {
     if (gather_over) {
         broadcast_game(game)
     }
+
+}
+
+exports.validate = function (current_ws, data) {
+
+    let game = get_game_from_data(data)
+
+    if (game.game_phase !== 3) {
+        throw 'wrong_game_phase'
+    }
+
+    let connection_pos = find_position_connections(current_ws, game.id)
+    if (connection_pos !== 0) {
+        throw 'not_game_master'
+    }
+
+    if (data === undefined || data.user_pos === undefined || data.answer_pos === undefined ||
+        !Number.isInteger(data.user_pos) || !Number.isInteger(data.answer_pos) ||
+        data.user_pos < 0 || data.user_pos >= game.names.length ||
+        data.answer_pos < 0 || data.answer_pos >= game.cats.length) {
+        throw 'invalid_answer_to_validate'
+    }
+
+    game.current_round[data.user_pos][data.answer_pos].valid = !game.current_round[data.user_pos][data.answer_pos].valid
+
+    games.update(game)
+    broadcast_game(game)
 
 }
