@@ -30,6 +30,10 @@ let message_parser = function (message, current_ws) {
             Actions.register_cat(current_ws, msg.data)
         } else if (action === 'start_game') {
             Actions.start_game(current_ws, msg.data)
+        } else if (action === 'first') {
+            Actions.first(current_ws, msg.data)
+        } else if (action === 'gather') {
+            Actions.gather(current_ws, msg.data)
         } else {
             throw 'unrecognized_action'
         }

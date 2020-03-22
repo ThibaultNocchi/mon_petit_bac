@@ -24,11 +24,15 @@ let get_game_from_data = function (data) {
     return new Game(res)
 }
 
+let broadcast = function (game_id, text) {
+    connections[game_id].forEach(element => {
+        element.send(text)
+    });
+}
+
 let broadcast_game = function (game) {
     let to_send = { type: "game", game: game.cleaned }
-    connections[game.id].forEach(element => {
-        element.send(JSON.stringify(to_send))
-    });
+    broadcast(game.id, JSON.stringify(to_send))
 }
 
 exports.create = function (current_ws, data) {
@@ -58,7 +62,7 @@ exports.connect = function (current_ws, data) {
 
     let game = get_game_from_data(data)
 
-    if (game.started) {
+    if (game.game_phase !== 0) {
         throw 'game_started'
     }
 
@@ -84,7 +88,7 @@ exports.register_cat = function (current_ws, data) {
 
     let game = get_game_from_data(data)
 
-    if (game.started) {
+    if (game.game_phase !== 0) {
         throw 'game_started'
     }
 
@@ -105,7 +109,7 @@ exports.register_cat = function (current_ws, data) {
 exports.start_game = function (current_ws, data) {
     let game = get_game_from_data(data)
 
-    if (game.started) {
+    if (game.game_phase !== 0) {
         throw 'game_started'
     }
 
@@ -118,8 +122,86 @@ exports.start_game = function (current_ws, data) {
         throw 'empty_game'
     }
 
-    game.started = true;
+    module.exports.new_round(current_ws, data)
+
+}
+
+exports.new_round = function (current_ws, data) {
+    let game = get_game_from_data(data)
+
+    if (game.game_phase !== 0 && game.game_phase !== 3) {
+        throw 'cant_start_new_round'
+    }
+
+    let connection_pos = find_position_connections(current_ws, game.id)
+    if (connection_pos !== 0) {
+        throw 'not_game_master'
+    }
+
+    let letter = rs.generate({ length: 1, charset: 'alphabetic', capitalization: 'uppercase' })
+
+    game.game_phase = 1;
+    game.current_letter = letter
     games.update(game)
     broadcast_game(game)
+
+}
+
+exports.first = function (current_ws, data) {
+
+    let game = get_game_from_data(data)
+
+    if (game.game_phase !== 1) {
+        throw 'wrong_game_phase'
+    }
+
+    game.game_phase = 2
+    game.current_round = []
+    for (let i = 0; i < game.names.length; ++i) {
+        game.current_round.push(undefined)
+    }
+    games.update(game)
+
+    broadcast_game(game)
+}
+
+exports.gather = function (current_ws, data) {
+    let game = get_game_from_data(data)
+
+    if (game.game_phase !== 2) {
+        throw 'wrong_game_phase'
+    }
+
+    let connection_pos = find_position_connections(current_ws, game.id)
+    if (game.current_round[connection_pos] !== undefined) {
+        throw 'user_current_round_already_saved'
+    }
+
+    if (!data || !data.answers || !Array.isArray(data.answers) || data.answers.length !== game.cats.length) {
+        throw 'invalid_answers'
+    }
+
+    game.current_round[connection_pos] = []
+    data.answers.forEach(element => {
+        game.current_round[connection_pos].push({ valid: false, value: element })
+    })
+
+    let gather_over = true
+
+    for (let i = 0; i < game.names.length; ++i) {
+        if (game.current_round[i] === undefined) {
+            gather_over = false
+        }
+    }
+
+    if (gather_over) {
+        game.game_phase = 3
+    }
+
+    games.update(game)
+
+    if (gather_over) {
+        broadcast_game(game)
+    }
 
 }

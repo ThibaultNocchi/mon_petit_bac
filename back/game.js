@@ -1,17 +1,26 @@
 module.exports = class Game {
 
     id = ""
-    started = false
+    /**
+     * Number representing the game phase
+     * 0 : game creation and login
+     * 1 : main game phase (answering)
+     * 2 : first person finished, gathering all answers
+     * 3 : game master validating answers
+     */
+    game_phase = 0
     names = []
     scores = []
     cats = []
+    current_round = []
+    current_letter = ''
 
-    constructor(options = { id: "test", started: false, names: [], scores: [], cats: [] }) {
+    constructor(options = { id: "test", game_phase: 0, names: [], scores: [], cats: [], current_round: [], current_letter: '' }) {
         Object.assign(this, options)
     }
 
     get cleaned() {
-        let res = { id: this.id, started: this.started, names: this.names, scores: this.scores, cats: this.cats }
+        let res = { id: this.id, game_phase: this.game_phase, names: this.names, scores: this.scores, cats: this.cats, current_round: this.current_round, current_letter: this.current_letter }
         return res
     }
 
