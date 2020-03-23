@@ -3,12 +3,17 @@
     <v-navigation-drawer app v-model="drawer">
       <v-list nav>
         <v-list-item
-          v-for="player in $store.getters.players"
-          :key="player.name"
+          v-for="(player, idx) in $store.getters.players"
+          :key="idx"
           two-line
         >
           <v-list-item-avatar>
-            <v-avatar color="blue-grey lighten-2"
+            <v-avatar
+              :color="
+                idx === $store.state.game.user_id
+                  ? 'primary'
+                  : 'blue-grey lighten-2'
+              "
               ><span class="white--text">{{
                 player.name[0].toUpperCase()
               }}</span></v-avatar
@@ -56,11 +61,25 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Mon Petit Bac</v-toolbar-title>
     </v-app-bar>
+
+    <v-content>
+      <v-container>
+        <AddCategories
+          v-if="
+            $store.state.game.game_phase === 0 &&
+              $store.state.game.user_id === 0
+          "
+        ></AddCategories>
+      </v-container>
+    </v-content>
   </div>
 </template>
 
 <script>
+import AddCategories from "@/components/AddCategories.vue";
+
 export default {
+  components: { AddCategories },
   data() {
     return { drawer: true };
   },

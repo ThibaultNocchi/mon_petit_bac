@@ -66,6 +66,8 @@ export default new Vuex.Store({
     SOCKET_ONMESSAGE(state, message) {
       state.socket.loading = false;
       let parsed = JSON.parse(message.data);
+      console.log("received");
+      console.log(parsed);
 
       if (
         parsed.type === undefined ||
@@ -97,6 +99,8 @@ export default new Vuex.Store({
   actions: {
     sendMessage: function(context, message) {
       context.state.socket.loading = true;
+      console.log("sending:");
+      console.log(message);
       Vue.prototype.$socket.send(JSON.stringify(message));
     }
   },
