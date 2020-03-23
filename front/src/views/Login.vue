@@ -9,7 +9,13 @@
             </v-toolbar>
 
             <v-scroll-x-transition hide-on-leave>
-              <v-form v-show="loginFormActive" @submit.prevent="joinGame">
+              <v-form
+                v-show="connectForm && !gameIdFilled"
+                @submit.prevent="
+                  $store.commit('clearError');
+                  gameIdFilled = true;
+                "
+              >
                 <v-card-text>
                   <v-text-field
                     label="Game ID"
@@ -17,35 +23,110 @@
                     prepend-icon="mdi-alphabetical"
                     type="text"
                     v-model="gameId"
+                    :error-messages="$store.getters.translatedError"
                   />
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer />
-                  <v-btn outlined="" @click="loginFormActive = false"
-                    >Create game</v-btn
+                  <v-btn
+                    :disabled="$store.state.socket.loading"
+                    outlined=""
+                    @click="
+                      $store.commit('clearError');
+                      connectForm = false;
+                    "
+                    >Create a game</v-btn
                   >
-                  <v-btn color="primary" @click="joinGame">Join</v-btn>
+                  <v-btn
+                    color="primary"
+                    @click="
+                      $store.commit('clearError');
+                      gameIdFilled = true;
+                    "
+                    >Connect</v-btn
+                  >
                 </v-card-actions>
               </v-form>
             </v-scroll-x-transition>
 
             <v-scroll-x-transition hide-on-leave>
-              <v-form v-show="!loginFormActive" @submit.prevent="createGame">
+              <v-form
+                v-show="connectForm && gameIdFilled"
+                @submit.prevent="
+                  $store.commit('clearError');
+                  joinGame();
+                "
+              >
                 <v-card-text>
                   <v-text-field
                     label="Your pseudo"
-                    name="creatorPseudo"
+                    name="pseudo"
                     prepend-icon="mdi-account"
                     type="text"
-                    v-model="creatorPseudo"
+                    v-model="pseudo"
+                    :error-messages="$store.getters.translatedError"
                   />
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer />
-                  <v-btn outlined="" @click="loginFormActive = true"
-                    >Join game</v-btn
+                  <v-btn
+                    :disabled="$store.state.socket.loading"
+                    outlined=""
+                    @click="
+                      $store.commit('clearError');
+                      gameIdFilled = false;
+                    "
+                    >Back</v-btn
                   >
-                  <v-btn color="primary" @click="createGame">Create</v-btn>
+                  <v-btn
+                    color="primary"
+                    @click="
+                      $store.commit('clearError');
+                      joinGame();
+                    "
+                    >Connect</v-btn
+                  >
+                </v-card-actions>
+              </v-form>
+            </v-scroll-x-transition>
+
+            <v-scroll-x-transition hide-on-leave>
+              <v-form
+                v-show="!connectForm"
+                @submit.prevent="
+                  $store.commit('clearError');
+                  createGame();
+                "
+              >
+                <v-card-text>
+                  <v-text-field
+                    label="Your pseudo"
+                    name="pseudo"
+                    prepend-icon="mdi-account"
+                    type="text"
+                    v-model="pseudo"
+                    :error-messages="$store.getters.translatedError"
+                  />
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer />
+                  <v-btn
+                    :disabled="$store.state.socket.loading"
+                    outlined=""
+                    @click="
+                      $store.commit('clearError');
+                      connectForm = true;
+                    "
+                    >Connect to a game</v-btn
+                  >
+                  <v-btn
+                    color="primary"
+                    @click="
+                      $store.commit('clearError');
+                      createGame();
+                    "
+                    >Create</v-btn
+                  >
                 </v-card-actions>
               </v-form>
             </v-scroll-x-transition>
@@ -59,14 +140,24 @@
 <script>
 export default {
   data() {
-    return { gameId: "", creatorPseudo: "", loginFormActive: true };
+    return {
+      gameId: "",
+      pseudo: "",
+      connectForm: true,
+      gameIdFilled: false
+    };
   },
   methods: {
     joinGame() {
-      console.log(this.gameId);
+      let obj = {
+        action: "connect",
+        data: { name: this.pseudo, game_id: this.gameId }
+      };
+      this.$store.dispatch("sendMessage", obj);
     },
     createGame() {
-      console.log(this.creatorPseudo);
+      let obj = { action: "create", data: { name: this.pseudo } };
+      this.$store.dispatch("sendMessage", obj);
     }
   }
 };

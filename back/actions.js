@@ -51,8 +51,8 @@ exports.create = function (current_ws, data) {
         throw 'missing_name'
     }
 
-    // let id = rs.generate(7)
-    let id = "test"
+    let id = rs.generate(7)
+    // let id = "test"
 
     let doc = new Game()
     doc.add_name(data.name)
