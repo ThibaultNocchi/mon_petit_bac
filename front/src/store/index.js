@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import router from "../router";
 
 Vue.use(Vuex);
 
@@ -35,6 +36,14 @@ export default new Vuex.Store({
         msg = state.errors_translation[state.socket.latest_error];
       }
       return msg;
+    },
+
+    players: state => {
+      let res = [];
+      for (let i = 0; i < state.game.names.length; ++i) {
+        res.push({ name: state.game.names[i], score: state.game.scores[i] });
+      }
+      return res;
     }
   },
 
@@ -68,9 +77,15 @@ export default new Vuex.Store({
       if (parsed.type === "error") {
         state.socket.latest_error = parsed.error;
       } else {
+        let redirect = false;
+        if (state.game === undefined) {
+          redirect = true;
+        }
         state.game = parsed.game;
         state.socket.latest_error = undefined;
-        console.log(state.game);
+        if (redirect) {
+          router.push("/game");
+        }
       }
     },
 
