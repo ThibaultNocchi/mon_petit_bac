@@ -34,15 +34,18 @@ let get_game_from_data = function (data) {
     return new Game(res)
 }
 
-let broadcast = function (game_id, text) {
-    connections[game_id].forEach(element => {
-        element.send(text)
-    });
-}
+// let broadcast = function (game_id, text) {
+//     connections[game_id].forEach(element => {
+//         element.send(text)
+//     });
+// }
 
 let broadcast_game = function (game) {
     let to_send = { type: "game", game: game.cleaned }
-    broadcast(game.id, JSON.stringify(to_send))
+    connections[game.id].forEach(element => {
+        to_send.game.user_id = find_position_connections(element, game.id)
+        element.send(JSON.stringify(to_send))
+    });
 }
 
 exports.create = function (current_ws, data) {
