@@ -6,6 +6,9 @@
     </div> -->
     <v-app>
       <router-view />
+      <v-overlay :value="!$store.state.socket.connected">
+        <v-icon size="70" color="red">mdi-lan-disconnect</v-icon>
+      </v-overlay>
     </v-app>
   </div>
 </template>

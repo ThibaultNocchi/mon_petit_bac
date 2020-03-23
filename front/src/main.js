@@ -7,7 +7,9 @@ import VueNativeSock from "vue-native-websocket";
 
 Vue.config.productionTip = false;
 
-Vue.use(VueNativeSock, "ws://localhost:8081", { store: store });
+Vue.use(VueNativeSock, "ws://localhost:8081", {
+  store: store
+});
 
 new Vue({
   router,
