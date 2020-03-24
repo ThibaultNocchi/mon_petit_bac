@@ -2,7 +2,7 @@ const WebSocket = require('ws')
 
 const Actions = require('./actions')
 
-const wss = new WebSocket.Server({ port: 8080 })
+const wss = new WebSocket.Server({ port: 8081 })
 
 let message_parser = function (message, current_ws) {
 
