@@ -1,47 +1,82 @@
 <template>
   <div>
     <v-navigation-drawer stateless app v-model="drawer">
-      <v-list nav>
-        <div v-if="$store.state.game.game_phase !== 0">
-          <v-list-item>
+      <template v-slot:prepend>
+        <v-list nav>
+          <div v-if="$store.state.game.game_phase !== 0">
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="title">{{
+                  $store.state.game.current_letter
+                }}</v-list-item-title>
+                <v-list-item-subtitle>Letter</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider></v-divider>
+          </div>
+
+          <v-list-item
+            v-for="(player, idx) in $store.getters.players"
+            :key="idx"
+            two-line
+            dense
+          >
+            <v-list-item-avatar>
+              <v-avatar
+                :color="
+                  idx === $store.state.game.user_id
+                    ? 'primary'
+                    : 'blue-grey lighten-2'
+                "
+                ><span class="white--text">{{
+                  player.name[0].toUpperCase()
+                }}</span></v-avatar
+              >
+            </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title">{{
-                $store.state.game.current_letter
-              }}</v-list-item-title>
-              <v-list-item-subtitle>Letter</v-list-item-subtitle>
+              <v-list-item-title>{{ player.name }}</v-list-item-title>
+              <v-list-item-subtitle
+                >Score: {{ player.score }}</v-list-item-subtitle
+              >
             </v-list-item-content>
           </v-list-item>
-          <v-divider></v-divider>
-        </div>
+        </v-list>
+        <v-divider></v-divider>
+      </template>
 
+      <v-list nav dense>
         <v-list-item
-          v-for="(player, idx) in $store.getters.players"
-          :key="idx"
-          two-line
           dense
+          v-for="(msg, idx) in $store.state.userMessages"
+          :key="idx"
         >
-          <v-list-item-avatar>
-            <v-avatar
-              :color="
-                idx === $store.state.game.user_id
-                  ? 'primary'
-                  : 'blue-grey lighten-2'
-              "
-              ><span class="white--text">{{
-                player.name[0].toUpperCase()
-              }}</span></v-avatar
-            >
-          </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title>{{ player.name }}</v-list-item-title>
-            <v-list-item-subtitle
-              >Score: {{ player.score }}</v-list-item-subtitle
-            >
+            <v-list-item-title v-text="msg"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
 
       <template v-slot:append>
+        <v-divider></v-divider>
+
+        <v-list nav>
+          <v-list-item>
+            <v-list-item-content>
+              <v-form @submit.prevent="sendMsg">
+                <v-text-field
+                  dense
+                  outlined
+                  label="Send a message"
+                  counter="140"
+                  v-model="chatMsg"
+                ></v-text-field>
+              </v-form>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
         <v-list nav>
           <v-list-item v-if="$store.state.game.game_phase === 0" two-line>
             <v-list-item-content>
@@ -124,6 +159,23 @@ export default {
         default:
           return true;
       }
+    },
+    chatMsg: {
+      get() {
+        return this.$store.state.chatMsg;
+      },
+      set(val) {
+        this.$store.commit("setChatMsg", val);
+      }
+    }
+  },
+  methods: {
+    sendMsg() {
+      let obj = {
+        action: "message",
+        data: { game_id: this.$store.state.game.id, message: this.chatMsg }
+      };
+      this.$store.dispatch("sendMessage", obj);
     }
   }
 };

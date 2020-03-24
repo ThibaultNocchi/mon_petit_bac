@@ -320,7 +320,9 @@ exports.message = function (current_ws, data) {
         throw 'invalid_msg'
     }
 
+    let ack = { type: "ackMessage" }
     let obj = { type: "message", message: msg }
+    current_ws.send(JSON.stringify(ack))
     broadcast(game.id, JSON.stringify(obj))
 
 }

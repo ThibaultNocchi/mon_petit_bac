@@ -13,6 +13,8 @@ export default new Vuex.Store({
     },
     game: undefined,
     currentAnswers: [],
+    userMessages: [],
+    chatMsg: "",
 
     errors_translation: {
       missing_name: "Pseudo is missing",
@@ -67,13 +69,20 @@ export default new Vuex.Store({
 
       if (
         parsed.type === undefined ||
-        (parsed.type !== "error" && parsed.type !== "game")
+        (parsed.type !== "error" &&
+          parsed.type !== "game" &&
+          parsed.type !== "message" &&
+          parsed.type !== "ackMessage")
       ) {
         Vue.prototype.$socket.close();
       }
 
       if (parsed.type === "error") {
         state.socket.latest_error = parsed.error;
+      } else if (parsed.type === "message") {
+        state.userMessages.push(parsed.message);
+      } else if (parsed.type === "ackMessage") {
+        state.chatMsg = "";
       } else {
         let redirect = false;
         if (state.game === undefined) {
@@ -97,6 +106,10 @@ export default new Vuex.Store({
 
     clearCurrentAsnwers(state) {
       state.currentAnswers = [];
+    },
+
+    setChatMsg(state, val) {
+      state.chatMsg = val;
     }
   },
 
