@@ -34,6 +34,9 @@
 <script>
 export default {
   name: "Answering",
+  mounted() {
+    this.$store.commit("clearCurrentAsnwers");
+  },
   methods: {
     first() {
       let obj = {

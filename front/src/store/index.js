@@ -98,6 +98,10 @@ export default new Vuex.Store({
 
     updateCurrentAnswers(state, { el, idx }) {
       state.currentAnswers[idx] = el;
+    },
+
+    clearCurrentAsnwers(state) {
+      state.currentAnswers = [];
     }
   },
 
