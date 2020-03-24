@@ -14,6 +14,7 @@ module.exports = class Game {
     cats = []
     current_round = []
     current_letter = ''
+    latest_letters = []
 
     constructor(options = { id: "test", game_phase: 0, names: [], scores: [], cats: [], current_round: [], current_letter: '' }) {
         Object.assign(this, options)

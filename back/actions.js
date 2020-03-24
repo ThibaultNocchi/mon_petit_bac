@@ -161,10 +161,21 @@ exports.new_round = function (current_ws, data) {
         throw 'not_game_master'
     }
 
-    let letter = rs.generate({ length: 1, charset: 'alphabetic', capitalization: 'uppercase' })
+    let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    charset = charset.split('')
+    charset = charset.filter((el) => !game.latest_letters.includes(el));
+    charset = charset.join('')
+
+    let letter = rs.generate({ length: 1, charset })
 
     game.game_phase = 1;
     game.current_letter = letter
+
+    game.latest_letters.push(letter)
+    if (game.latest_letters.length > 10) {
+        game.latest_letters = game.latest_letters.slice(1, 11)
+    }
+
     games.update(game)
     broadcast_game(game)
 
