@@ -48,6 +48,16 @@ let broadcast_game = function (game) {
     });
 }
 
+let sanitize_word = function (w) {
+    return w.trim().toLowerCase()
+}
+
+let are_words_same = function (w1, w2) {
+    w1 = sanitize_word(w1)
+    w2 = sanitize_word(w2)
+    return w1 === w2
+}
+
 exports.create = function (current_ws, data) {
 
     if (data === undefined || data.name === undefined || data.name === '') {
@@ -244,7 +254,7 @@ exports.validate = function (current_ws, data) {
     // game.current_round[data.user_pos][data.answer_pos].valid = !game.current_round[data.user_pos][data.answer_pos].valid
     for (let i = 0; i < game.names.length; ++i) {
         for (let j = 0; j < game.cats.length; ++j) {
-            if (game.current_round[i][j].value === value) {
+            if (are_words_same(game.current_round[i][j].value, value)) {
                 game.current_round[i][j].valid = !game.current_round[i][j].valid
             }
         }
@@ -277,7 +287,7 @@ exports.end_round = function (current_ws, data) {
     for (let i = 0; i < game.cats.length; ++i) {
         for (let j = 0; j < game.names.length; ++j) {
             if (game.current_round[j][i].valid) {
-                answers[i].push(game.current_round[j][i].value.toLowerCase())
+                answers[i].push(sanitize_word(game.current_round[j][i].value))
             } else {
                 answers[i].push(undefined)
             }
