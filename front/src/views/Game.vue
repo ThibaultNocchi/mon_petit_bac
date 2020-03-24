@@ -49,9 +49,13 @@
           dense
           v-for="(msg, idx) in $store.state.userMessages"
           :key="idx"
+          class="chatMsg"
         >
           <v-list-item-content>
-            <v-list-item-title v-text="msg"></v-list-item-title>
+            <v-list-item-title v-text="msg.message"></v-list-item-title>
+            <v-list-item-subtitle>{{
+              $store.state.game.names[msg.sender]
+            }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>

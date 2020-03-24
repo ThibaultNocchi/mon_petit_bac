@@ -321,7 +321,7 @@ exports.message = function (current_ws, data) {
     }
 
     let ack = { type: "ackMessage" }
-    let obj = { type: "message", message: msg }
+    let obj = { type: "message", message: msg, sender: find_position_connections(current_ws, game.id) }
     current_ws.send(JSON.stringify(ack))
     broadcast(game.id, JSON.stringify(obj))
 

@@ -80,7 +80,10 @@ export default new Vuex.Store({
       if (parsed.type === "error") {
         state.socket.latest_error = parsed.error;
       } else if (parsed.type === "message") {
-        state.userMessages.push(parsed.message);
+        state.userMessages.push({
+          message: parsed.message,
+          sender: parsed.sender
+        });
       } else if (parsed.type === "ackMessage") {
         state.chatMsg = "";
       } else {
