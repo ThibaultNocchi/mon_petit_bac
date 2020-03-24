@@ -264,7 +264,7 @@ exports.validate = function (current_ws, data) {
 
     for (let i = 0; i < game.names.length; ++i) {
         if (are_words_same(game.current_round[i][data.answer_pos].value, value)) {
-            game.current_round[i][j].valid = !game.current_round[i][j].valid
+            game.current_round[i][data.answer_pos].valid = !game.current_round[i][data.answer_pos].valid
         }
     }
 

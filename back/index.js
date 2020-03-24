@@ -46,6 +46,7 @@ let message_parser = function (message, current_ws) {
 
     } catch (error) {
         current_ws.send(JSON.stringify({ type: "error", error }))
+        console.error(error)
     }
 
     return
