@@ -6,7 +6,6 @@
 export default {
   name: "Gathering",
   mounted() {
-    console.log("gathering started");
     let obj = {
       action: "gather",
       data: { game_id: this.$store.state.game.id }
