@@ -79,6 +79,7 @@
           "
         ></AddCategories>
         <Answering v-if="$store.state.game.game_phase === 1"></Answering>
+        <Gathering v-if="$store.state.game.game_phase === 2"></Gathering>
       </v-container>
     </v-content>
   </div>
@@ -87,9 +88,10 @@
 <script>
 import AddCategories from "@/components/AddCategories.vue";
 import Answering from "@/components/Answering.vue";
+import Gathering from "@/components/Gathering.vue";
 
 export default {
-  components: { AddCategories, Answering },
+  components: { AddCategories, Answering, Gathering },
   data() {
     return { drawer: true };
   },
