@@ -51,24 +51,19 @@ export default new Vuex.Store({
   mutations: {
     SOCKET_ONOPEN(state) {
       state.socket.connected = true;
-      console.log("Socket opened");
     },
 
     SOCKET_ONCLOSE(state) {
       state.socket.connected = false;
-      console.log("Socket closed");
     },
 
-    SOCKET_ONERROR(state, event) {
+    SOCKET_ONERROR(state) {
       state.socket.connected = false;
-      console.error(state, event);
     },
 
     SOCKET_ONMESSAGE(state, message) {
       state.socket.loading = false;
       let parsed = JSON.parse(message.data);
-      // console.log("received");
-      // console.log(parsed);
 
       if (
         parsed.type === undefined ||
@@ -108,8 +103,6 @@ export default new Vuex.Store({
   actions: {
     sendMessage: function(context, message) {
       context.state.socket.loading = true;
-      // console.log("sending:");
-      // console.log(message);
       Vue.prototype.$socket.send(JSON.stringify(message));
     }
   },
