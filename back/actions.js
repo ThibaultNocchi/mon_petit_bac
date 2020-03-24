@@ -251,12 +251,9 @@ exports.validate = function (current_ws, data) {
 
     let value = game.current_round[data.user_pos][data.answer_pos].value
 
-    // game.current_round[data.user_pos][data.answer_pos].valid = !game.current_round[data.user_pos][data.answer_pos].valid
     for (let i = 0; i < game.names.length; ++i) {
-        for (let j = 0; j < game.cats.length; ++j) {
-            if (are_words_same(game.current_round[i][j].value, value)) {
-                game.current_round[i][j].valid = !game.current_round[i][j].valid
-            }
+        if (are_words_same(game.current_round[i][data.answer_pos].value, value)) {
+            game.current_round[i][j].valid = !game.current_round[i][j].valid
         }
     }
 
