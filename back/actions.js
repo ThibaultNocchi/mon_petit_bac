@@ -239,7 +239,17 @@ exports.validate = function (current_ws, data) {
         throw 'invalid_answer_to_validate'
     }
 
-    game.current_round[data.user_pos][data.answer_pos].valid = !game.current_round[data.user_pos][data.answer_pos].valid
+    let value = game.current_round[data.user_pos][data.answer_pos].value
+
+    // game.current_round[data.user_pos][data.answer_pos].valid = !game.current_round[data.user_pos][data.answer_pos].valid
+    for (let i = 0; i < game.names.length; ++i) {
+        for (let j = 0; j < game.cats.length; ++j) {
+            if (game.current_round[i][j].value === value) {
+                game.current_round[i][j].valid = !game.current_round[i][j].valid
+            }
+        }
+    }
+
 
     games.update(game)
     broadcast_game(game)
