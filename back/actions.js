@@ -34,11 +34,11 @@ let get_game_from_data = function (data) {
     return new Game(res)
 }
 
-// let broadcast = function (game_id, text) {
-//     connections[game_id].forEach(element => {
-//         element.send(text)
-//     });
-// }
+let broadcast = function (game_id, text) {
+    connections[game_id].forEach(element => {
+        element.send(text)
+    });
+}
 
 let broadcast_game = function (game) {
     let to_send = { type: "game", game: game.cleaned }
@@ -307,5 +307,23 @@ exports.end_round = function (current_ws, data) {
 
     games.update(game)
     module.exports.new_round(current_ws, data)
+
+}
+
+exports.message = function (current_ws, data) {
+
+    let game = get_game_from_data(data)
+    if (data === undefined || data.message === undefined || data.message === "") {
+        throw 'no_msg'
+    }
+
+    let msg = data.message.trim()
+
+    if (msg.length > 140) {
+        throw 'invalid_msg'
+    }
+
+    let obj = { type: "message", message: msg }
+    broadcast(game.id, JSON.stringify(obj))
 
 }
