@@ -16,4 +16,9 @@ const wss = new WebSocket.Server({ port: 8081 })
 Note that you'll then have to change the hardcoded server port in the frontend.
 
 ### Frontend
-Go into the `front` folder, and do `npm install`
+Go into the `front` folder, do `npm install` and `npx vue-cli-service build`. Launch the front HTTP server with `npx http-server dist/ -p 8080` (you can specify any port you want) or just put the `dist` folder behind any other HTTP server.
+
+If you changed the backend port, you can change specify it in `src/main.js`:
+```javascript
+let socketUrl = "ws://" + window.location.hostname + ":8081";
+```
