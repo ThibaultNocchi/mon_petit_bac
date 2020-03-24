@@ -2,10 +2,23 @@
   <div>
     <v-navigation-drawer app v-model="drawer">
       <v-list nav>
+        <div v-if="$store.state.game.game_phase !== 0">
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title class="title">{{
+                $store.state.game.current_letter
+              }}</v-list-item-title>
+              <v-list-item-subtitle>Letter</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+        </div>
+
         <v-list-item
           v-for="(player, idx) in $store.getters.players"
           :key="idx"
           two-line
+          dense
         >
           <v-list-item-avatar>
             <v-avatar
@@ -31,9 +44,6 @@
       <template v-slot:append>
         <v-list nav>
           <v-list-item v-if="$store.state.game.game_phase === 0" two-line>
-            <!-- <v-list-item-icon
-              ><v-icon large>mdi-alphabetical</v-icon></v-list-item-icon
-            > -->
             <v-list-item-content>
               <v-list-item-title>{{ $store.state.game.id }}</v-list-item-title>
               <v-list-item-subtitle>Game ID</v-list-item-subtitle>
@@ -42,17 +52,14 @@
           <v-list-item>
             <v-list-item-icon>
               <v-progress-circular
-                v-if="$store.state.game.game_phase === 0"
+                v-if="waitingSpinner"
                 indeterminate
                 rotate
                 color="orange"
               ></v-progress-circular>
               <v-icon v-else color="green">mdi-check</v-icon>
             </v-list-item-icon>
-            <v-list-item-subtitle v-if="$store.state.game.game_phase === 0"
-              >Waiting to start...</v-list-item-subtitle
-            >
-            <v-list-item-subtitle v-else>Game started!</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ stateMsg }}</v-list-item-subtitle>
           </v-list-item>
         </v-list>
       </template>
@@ -86,6 +93,30 @@ export default {
   mounted() {
     if (this.$store.state.game === undefined) {
       this.$router.push("/");
+    }
+  },
+  computed: {
+    stateMsg() {
+      switch (this.$store.state.game.game_phase) {
+        case 0:
+          return "Waiting to start...";
+        case 1:
+          return "Play!";
+        case 2:
+          return "Gathering all data...";
+        case 3:
+          return "Validating answers...";
+        default:
+          return "";
+      }
+    },
+    waitingSpinner() {
+      switch (this.$store.state.game.game_phase) {
+        case 1:
+          return false;
+        default:
+          return true;
+      }
     }
   }
 };
