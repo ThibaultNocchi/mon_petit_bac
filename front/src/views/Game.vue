@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer app v-model="drawer">
+    <v-navigation-drawer stateless app v-model="drawer">
       <v-list nav>
         <div v-if="$store.state.game.game_phase !== 0">
           <v-list-item>
@@ -64,12 +64,13 @@
         </v-list>
       </template>
     </v-navigation-drawer>
+
     <v-app-bar app collapse-on-scroll color="blue-grey lighten-2" dense dark>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon> -->
       <v-toolbar-title>Mon Petit Bac</v-toolbar-title>
     </v-app-bar>
 
-    <v-content>
+    <v-content class="ma-3">
       <v-container>
         <AddCategories
           v-if="
@@ -77,6 +78,7 @@
               $store.state.game.user_id === 0
           "
         ></AddCategories>
+        <Answering v-if="$store.state.game.game_phase === 1"></Answering>
       </v-container>
     </v-content>
   </div>
@@ -84,9 +86,10 @@
 
 <script>
 import AddCategories from "@/components/AddCategories.vue";
+import Answering from "@/components/Answering.vue";
 
 export default {
-  components: { AddCategories },
+  components: { AddCategories, Answering },
   data() {
     return { drawer: true };
   },

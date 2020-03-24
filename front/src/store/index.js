@@ -12,6 +12,7 @@ export default new Vuex.Store({
       latest_error: undefined
     },
     game: undefined,
+    currentAnswers: [],
 
     errors_translation: {
       missing_name: "Pseudo is missing",
@@ -66,8 +67,8 @@ export default new Vuex.Store({
     SOCKET_ONMESSAGE(state, message) {
       state.socket.loading = false;
       let parsed = JSON.parse(message.data);
-      console.log("received");
-      console.log(parsed);
+      // console.log("received");
+      // console.log(parsed);
 
       if (
         parsed.type === undefined ||
@@ -93,14 +94,18 @@ export default new Vuex.Store({
 
     clearError(state) {
       state.socket.latest_error = undefined;
+    },
+
+    updateCurrentAnswers(state, { el, idx }) {
+      state.currentAnswers[idx] = el;
     }
   },
 
   actions: {
     sendMessage: function(context, message) {
       context.state.socket.loading = true;
-      console.log("sending:");
-      console.log(message);
+      // console.log("sending:");
+      // console.log(message);
       Vue.prototype.$socket.send(JSON.stringify(message));
     }
   },
