@@ -27,7 +27,14 @@ let get_game_from_data = function (data) {
     if (data === undefined || data.game_id === undefined) {
         throw 'missing_game_id'
     }
-    let res = games.findOne({ id: data.game_id })
+    return get_game_from_id(data.game_id)
+}
+
+let get_game_from_id = function (game_id) {
+    if (game_id === undefined) {
+        throw 'missing_game_id'
+    }
+    let res = games.findOne({ id: game_id })
     if (res === null) {
         throw 'wrong_game_id'
     }
@@ -222,6 +229,12 @@ exports.gather = function (current_ws, data) {
         game.current_round[connection_pos].push({ valid: false, value: element })
     })
 
+    check_gather_over(game)
+
+}
+
+let check_gather_over = function (game) {
+
     let gather_over = true
 
     for (let i = 0; i < game.names.length; ++i) {
@@ -239,6 +252,8 @@ exports.gather = function (current_ws, data) {
     if (gather_over) {
         broadcast_game(game)
     }
+
+    return gather_over
 
 }
 
@@ -337,5 +352,50 @@ exports.message = function (current_ws, data) {
     let obj = { type: "message", message: msg, sender: find_position_connections(current_ws, game.id) }
     current_ws.send(JSON.stringify(ack))
     broadcast(game.id, JSON.stringify(obj))
+
+}
+
+exports.disconnect = function (current_ws) {
+
+    let game = undefined
+    let user_pos = undefined
+    for ([game_id, conns] of Object.entries(connections)) {
+        for ([pos, conn] of Object.entries(conns)) {
+            if (conn === current_ws) {
+                game = get_game_from_id(game_id)
+                user_pos = pos
+                break
+            }
+        }
+        if (game !== undefined) { break }
+    }
+
+    if (game === undefined) {
+        return
+    }
+
+    let user_name = game.names[user_pos]
+
+    game.names.splice(user_pos, 1)
+    game.scores.splice(user_pos, 1)
+    if (game.current_round !== []) {
+        game.current_round.splice(user_pos, 1)
+    }
+    connections[game.id].splice(user_pos, 1)
+
+    console.log("[" + game.id + "]: " + user_name + " left")
+
+    games.update(game)
+    if (connections[game.id].length === 0) {
+        console.log("[" + game.id + "]: game deleted")
+        games.remove(game)
+    } else {
+
+        if (game.game_phase === 2 && check_gather_over(game)) {
+        } else {
+            broadcast_game(game)
+        }
+
+    }
 
 }

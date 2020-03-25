@@ -46,7 +46,7 @@ let message_parser = function (message, current_ws) {
 
     } catch (error) {
         current_ws.send(JSON.stringify({ type: "error", error }))
-        console.error(error)
+        console.error('Error: ' + error)
     }
 
     return
@@ -55,10 +55,12 @@ let message_parser = function (message, current_ws) {
 wss.on('connection', function connection(ws) {
 
     ws.on('message', function incoming(message) {
-        // console.log('received: %s', message)
         message_parser(message, ws)
 
     })
 
-    // ws.send('connected')
+    ws.on('close', () => {
+        Actions.disconnect(ws)
+    })
+
 });

@@ -21,7 +21,10 @@ module.exports = class Game {
     }
 
     get cleaned() {
-        let res = { id: this.id, game_phase: this.game_phase, names: this.names, scores: this.scores, cats: this.cats, current_round: this.current_round, current_letter: this.current_letter }
+        let res = { id: this.id, game_phase: this.game_phase, names: this.names, scores: this.scores, cats: this.cats, current_letter: this.current_letter }
+        if (this.game_phase > 2) {
+            res.current_round = this.current_round
+        }
         return res
     }
 
