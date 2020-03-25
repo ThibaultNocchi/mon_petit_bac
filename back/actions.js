@@ -65,7 +65,6 @@ exports.create = function (current_ws, data) {
     }
 
     let id = rs.generate(7)
-    // let id = "test"
 
     let doc = new Game()
     doc.add_name(data.name)
@@ -74,6 +73,7 @@ exports.create = function (current_ws, data) {
     games.insert(doc)
     connections[id] = [current_ws]
     broadcast_game(doc)
+    console.log("[" + doc.id + "]: " + data.name + " created a game")
 
 }
 
@@ -100,6 +100,7 @@ exports.connect = function (current_ws, data) {
 
     games.update(game)
     broadcast_game(game)
+    console.log("[" + game.id + "]: " + data.name + " joined")
 
 }
 
@@ -146,6 +147,7 @@ exports.start_game = function (current_ws, data) {
     }
 
     module.exports.new_round(current_ws, data)
+    console.log("[" + game.id + "]: starts with " + game.cats.length + " categories / " + game.names.length + " users")
 
 }
 
