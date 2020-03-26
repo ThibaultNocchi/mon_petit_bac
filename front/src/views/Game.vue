@@ -35,9 +35,10 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>{{ player.name }}</v-list-item-title>
-              <v-list-item-subtitle
-                >Score: {{ player.score }}</v-list-item-subtitle
-              >
+              <v-list-item-subtitle>
+                <span v-if="player.playing">Score: {{ player.score }}</span>
+                <span v-else>Waiting next round...</span>
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -80,7 +81,7 @@
         <v-divider></v-divider>
 
         <v-list nav>
-          <v-list-item v-if="$store.state.game.game_phase === 0" two-line>
+          <v-list-item two-line>
             <v-list-item-content>
               <v-list-item-title>{{ $store.state.game.id }}</v-list-item-title>
               <v-list-item-subtitle>Game ID</v-list-item-subtitle>
@@ -115,9 +116,27 @@
               $store.state.game.user_id === 0
           "
         ></AddCategories>
-        <Answering v-if="$store.state.game.game_phase === 1"></Answering>
-        <Gathering v-if="$store.state.game.game_phase === 2"></Gathering>
-        <Validation v-if="$store.state.game.game_phase === 3"></Validation>
+
+        <Answering
+          v-if="
+            $store.state.game.game_phase === 1 &&
+              $store.getters.currentUserPlaying
+          "
+        ></Answering>
+
+        <Gathering
+          v-if="
+            $store.state.game.game_phase === 2 &&
+              $store.getters.currentUserPlaying
+          "
+        ></Gathering>
+
+        <Validation
+          v-if="
+            $store.state.game.game_phase === 3 &&
+              $store.getters.currentUserPlaying
+          "
+        ></Validation>
       </v-container>
     </v-content>
   </div>
@@ -141,6 +160,9 @@ export default {
   },
   computed: {
     stateMsg() {
+      if (!this.$store.getters.currentUserPlaying) {
+        return "Waiting for next round...";
+      }
       switch (this.$store.state.game.game_phase) {
         case 0:
           return "Waiting to start...";
@@ -155,6 +177,9 @@ export default {
       }
     },
     waitingSpinner() {
+      if (!this.$store.getters.currentUserPlaying) {
+        return true;
+      }
       switch (this.$store.state.game.game_phase) {
         case 1:
           return false;

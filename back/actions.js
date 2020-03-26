@@ -92,15 +92,16 @@ exports.connect = function (current_ws, data) {
 
     let game = get_game_from_data(data)
 
-    if (game.game_phase !== 0) {
-        throw 'game_started'
-    }
-
     if (find_position_connections(current_ws, game.id) !== -1) {
         throw 'already_connected'
     }
 
-    if (game.add_name(data.name) === undefined) {
+    let playing = true
+    if (game.game_phase !== 0) {
+        playing = false
+    }
+
+    if (game.add_name(data.name, playing) === undefined) {
         throw 'name_taken'
     }
     connections[game.id].push(current_ws)
@@ -158,10 +159,10 @@ exports.start_game = function (current_ws, data) {
 
 }
 
-exports.new_round = function (current_ws, data) {
+exports.new_round = function (current_ws, data, force = false) {
     let game = get_game_from_data(data)
 
-    if (game.game_phase !== 0 && game.game_phase !== 3) {
+    if (!force && game.game_phase !== 0 && game.game_phase !== 3) {
         throw 'wrong_game_phase'
     }
 
@@ -183,6 +184,12 @@ exports.new_round = function (current_ws, data) {
     game.latest_letters.push(letter)
     if (game.latest_letters.length > 10) {
         game.latest_letters = game.latest_letters.slice(1, 11)
+    }
+
+    for (let i = 0; i < game.names.length; ++i) {
+        if (!game.names[i].playing) {
+            game.names[i].playing = true
+        }
     }
 
     games.update(game)
@@ -393,6 +400,10 @@ exports.disconnect = function (current_ws) {
         if (game.game_phase === 2 && check_gather_over(game)) {
         } else {
             broadcast_game(game)
+        }
+
+        if (game.playing_positions.length === 0) {
+            module.exports.new_round(connections[game.id][0], { game_id: game.id }, true)
         }
 
     }

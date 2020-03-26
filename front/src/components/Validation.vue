@@ -1,6 +1,10 @@
 <template>
   <div>
-    <v-row dense v-for="(player, idx) in $store.getters.players" :key="idx">
+    <v-row
+      dense
+      v-for="(player, idx) in $store.getters.playingPlayers"
+      :key="idx"
+    >
       <v-col cols="12">
         <v-subheader>{{ player.name }}</v-subheader>
       </v-col>
@@ -16,20 +20,20 @@
           outlined
           readonly
           :label="cat"
-          :value="$store.state.game.current_round[idx][idx2].value"
-          :error="!$store.state.game.current_round[idx][idx2].valid"
-          :success="$store.state.game.current_round[idx][idx2].valid"
+          :value="$store.state.game.current_round[player.id][idx2].value"
+          :error="!$store.state.game.current_round[player.id][idx2].valid"
+          :success="$store.state.game.current_round[player.id][idx2].valid"
         >
           <template v-slot:append v-if="$store.state.game.user_id === 0">
             <v-icon
               :color="
-                $store.state.game.current_round[idx][idx2].valid
+                $store.state.game.current_round[player.id][idx2].valid
                   ? 'red'
                   : 'green'
               "
               @click="validate(idx, idx2)"
               >mdi-{{
-                $store.state.game.current_round[idx][idx2].valid
+                $store.state.game.current_round[player.id][idx2].valid
                   ? "close"
                   : "check"
               }}</v-icon

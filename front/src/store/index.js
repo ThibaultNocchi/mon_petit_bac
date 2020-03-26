@@ -46,10 +46,26 @@ export default new Vuex.Store({
       for (let i = 0; i < state.game.names.length; ++i) {
         res.push({
           name: state.game.names[i].name,
-          score: state.game.scores[i]
+          score: state.game.scores[i],
+          playing: state.game.names[i].playing,
+          id: i
         });
       }
       return res;
+    },
+
+    playingPlayers: (state, getters) => {
+      let res = [];
+      getters.players.forEach(player => {
+        if (player.playing) {
+          res.push(player);
+        }
+      });
+      return res;
+    },
+
+    currentUserPlaying: state => {
+      return state.game.names[state.game.user_id].playing;
     }
   },
 
