@@ -22,16 +22,22 @@
             dense
           >
             <v-list-item-avatar>
-              <v-avatar
-                :color="
-                  idx === $store.state.game.user_id
-                    ? 'primary'
-                    : 'blue-grey lighten-2'
-                "
-                ><span class="white--text">{{
-                  player.name[0].toUpperCase()
-                }}</span></v-avatar
+              <v-skeleton-loader
+                type="avatar"
+                transition="fade-transition"
+                :loading="!player.playing"
               >
+                <v-avatar
+                  :color="
+                    idx === $store.state.game.user_id
+                      ? 'primary'
+                      : 'blue-grey lighten-2'
+                  "
+                  ><span class="white--text">{{
+                    player.name[0].toUpperCase()
+                  }}</span></v-avatar
+                >
+              </v-skeleton-loader>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>{{ player.name }}</v-list-item-title>
@@ -111,32 +117,16 @@
     <v-content class="ma-3">
       <v-container>
         <AddCategories
-          v-if="
-            $store.state.game.game_phase === 0 &&
-              $store.state.game.user_id === 0
-          "
+          v-if="$store.state.game.game_phase === 0"
         ></AddCategories>
 
-        <Answering
-          v-if="
-            $store.state.game.game_phase === 1 &&
-              $store.getters.currentUserPlaying
-          "
-        ></Answering>
+        <div v-if="$store.getters.currentUserPlaying">
+          <Answering v-if="$store.state.game.game_phase === 1"></Answering>
+          <Gathering v-if="$store.state.game.game_phase === 2"></Gathering>
+          <Validation v-if="$store.state.game.game_phase === 3"></Validation>
+        </div>
 
-        <Gathering
-          v-if="
-            $store.state.game.game_phase === 2 &&
-              $store.getters.currentUserPlaying
-          "
-        ></Gathering>
-
-        <Validation
-          v-if="
-            $store.state.game.game_phase === 3 &&
-              $store.getters.currentUserPlaying
-          "
-        ></Validation>
+        <WaitingScreen v-else text="Waiting for next round"></WaitingScreen>
       </v-container>
     </v-content>
   </div>
@@ -147,9 +137,16 @@ import AddCategories from "@/components/AddCategories.vue";
 import Answering from "@/components/Answering.vue";
 import Gathering from "@/components/Gathering.vue";
 import Validation from "@/components/Validation.vue";
+import WaitingScreen from "@/components/WaitingScreen.vue";
 
 export default {
-  components: { AddCategories, Answering, Gathering, Validation },
+  components: {
+    AddCategories,
+    Answering,
+    Gathering,
+    Validation,
+    WaitingScreen
+  },
   data() {
     return { drawer: true };
   },
