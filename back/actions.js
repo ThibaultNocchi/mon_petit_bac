@@ -154,12 +154,12 @@ exports.start_game = function (current_ws, data) {
         throw 'empty_game'
     }
 
-    module.exports.new_round(current_ws, data)
+    new_round(current_ws, data)
     console.log("[" + game.id + "]: starts with " + game.cats.length + " categories / " + game.playing_positions.length + " users")
 
 }
 
-exports.new_round = function (current_ws, data, force = false) {
+let new_round = function (current_ws, data, force = false) {
     let game = get_game_from_data(data)
 
     if (!force && game.game_phase !== 0 && game.game_phase !== 3) {
@@ -337,7 +337,7 @@ exports.end_round = function (current_ws, data) {
     }
 
     games.update(game)
-    module.exports.new_round(current_ws, data)
+    new_round(current_ws, data)
 
 }
 
@@ -403,7 +403,7 @@ exports.disconnect = function (current_ws) {
         }
 
         if (game.playing_positions.length === 0) {
-            module.exports.new_round(connections[game.id][0], { game_id: game.id }, true)
+            new_round(connections[game.id][0], { game_id: game.id }, true)
         }
 
     }
