@@ -349,7 +349,7 @@ exports.message = function (current_ws, data) {
     }
 
     let ack = { type: "ackMessage" }
-    let obj = { type: "message", message: msg, sender: find_position_connections(current_ws, game.id) }
+    let obj = { type: "message", message: msg, sender: game.names[find_position_connections(current_ws, game.id)].name }
     current_ws.send(JSON.stringify(ack))
     broadcast(game.id, JSON.stringify(obj))
 
@@ -374,7 +374,7 @@ exports.disconnect = function (current_ws) {
         return
     }
 
-    let user_name = game.names[user_pos]
+    let user_name = game.names[user_pos].name
 
     game.names.splice(user_pos, 1)
     game.scores.splice(user_pos, 1)

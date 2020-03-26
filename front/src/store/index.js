@@ -44,7 +44,10 @@ export default new Vuex.Store({
     players: state => {
       let res = [];
       for (let i = 0; i < state.game.names.length; ++i) {
-        res.push({ name: state.game.names[i], score: state.game.scores[i] });
+        res.push({
+          name: state.game.names[i].name,
+          score: state.game.scores[i]
+        });
       }
       return res;
     }

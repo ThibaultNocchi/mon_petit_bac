@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-row dense v-for="(name, idx) in $store.state.game.names" :key="idx">
+    <v-row dense v-for="(player, idx) in $store.getters.players" :key="idx">
       <v-col cols="12">
-        <v-subheader>{{ name }}</v-subheader>
+        <v-subheader>{{ player.name }}</v-subheader>
       </v-col>
       <v-col
         cols="6"

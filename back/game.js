@@ -32,11 +32,11 @@ module.exports = class Game {
         return JSON.stringify(this.cleaned)
     }
 
-    add_name(name) {
-        if (this.names.find(el => el === name) != undefined) {
+    add_name(name, playing = true) {
+        if (this.names.find(el => el.name === name) != undefined) {
             return undefined
         }
-        this.names.push(name)
+        this.names.push({ name, playing })
         this.scores.push(0)
         return name
     }

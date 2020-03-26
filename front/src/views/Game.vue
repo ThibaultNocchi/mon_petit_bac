@@ -53,9 +53,7 @@
         >
           <v-list-item-content>
             <v-list-item-title v-text="msg.message"></v-list-item-title>
-            <v-list-item-subtitle>{{
-              $store.state.game.names[msg.sender]
-            }}</v-list-item-subtitle>
+            <v-list-item-subtitle v-text="msg.sender"></v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
