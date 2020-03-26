@@ -63,6 +63,7 @@
                     name="pseudo"
                     prepend-icon="mdi-account"
                     type="text"
+                    autofocus
                     v-model="pseudo"
                     :error-messages="$store.getters.translatedError"
                   />

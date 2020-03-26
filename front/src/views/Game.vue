@@ -54,7 +54,7 @@
       <v-list nav dense>
         <v-list-item
           dense
-          v-for="(msg, idx) in $store.state.userMessages"
+          v-for="(msg, idx) in $store.state.userMessages.slice().reverse()"
           :key="idx"
           class="chatMsg"
         >
