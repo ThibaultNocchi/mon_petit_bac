@@ -149,12 +149,12 @@ exports.start_game = function (current_ws, data) {
         throw 'not_game_master'
     }
 
-    if (game.names.length === 0 || game.cats.length === 0) {
+    if (game.playing_positions.length === 0 || game.cats.length === 0) {
         throw 'empty_game'
     }
 
     module.exports.new_round(current_ws, data)
-    console.log("[" + game.id + "]: starts with " + game.cats.length + " categories / " + game.names.length + " users")
+    console.log("[" + game.id + "]: starts with " + game.cats.length + " categories / " + game.playing_positions.length + " users")
 
 }
 
@@ -237,11 +237,11 @@ let check_gather_over = function (game) {
 
     let gather_over = true
 
-    for (let i = 0; i < game.names.length; ++i) {
-        if (game.current_round[i] === undefined) {
+    game.playing_positions.forEach(player_idx => {
+        if (game.current_round[player_idx] === undefined) {
             gather_over = false
         }
-    }
+    });
 
     if (gather_over) {
         game.game_phase = 3
@@ -279,12 +279,11 @@ exports.validate = function (current_ws, data) {
 
     let value = game.current_round[data.user_pos][data.answer_pos].value
 
-    for (let i = 0; i < game.names.length; ++i) {
-        if (are_words_same(game.current_round[i][data.answer_pos].value, value)) {
-            game.current_round[i][data.answer_pos].valid = !game.current_round[i][data.answer_pos].valid
+    game.playing_positions.forEach(player_idx => {
+        if (are_words_same(game.current_round[player_idx][data.answer_pos].value, value)) {
+            game.current_round[player_idx][data.answer_pos].valid = !game.current_round[player_idx][data.answer_pos].valid
         }
-    }
-
+    });
 
     games.update(game)
     broadcast_game(game)
@@ -310,24 +309,24 @@ exports.end_round = function (current_ws, data) {
     }
 
     for (let i = 0; i < game.cats.length; ++i) {
-        for (let j = 0; j < game.names.length; ++j) {
-            if (game.current_round[j][i].valid) {
-                answers[i].push(sanitize_word(game.current_round[j][i].value))
+        game.playing_positions.forEach(player_idx => {
+            if (game.current_round[player_idx][i].valid) {
+                answers[i].push(sanitize_word(game.current_round[player_idx][i].value))
             } else {
                 answers[i].push(undefined)
             }
-        }
+        });
     }
 
     for (let i = 0; i < game.cats.length; ++i) {
-        for (let j = 0; j < game.names.length; ++j) {
-            if (answers[i][j] !== undefined) {
-                game.scores[j]++
-                if (count_occurences_array(answers[i], answers[i][j]) === 1) {
-                    game.scores[j]++
+        game.playing_positions.forEach(player_idx => {
+            if (answers[i][player_idx] !== undefined) {
+                game.scores[player_idx]++
+                if (count_occurences_array(answers[i], answers[i][player_idx]) === 1) {
+                    game.scores[player_idx]++
                 }
             }
-        }
+        });
     }
 
     games.update(game)

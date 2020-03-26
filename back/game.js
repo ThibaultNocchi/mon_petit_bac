@@ -32,6 +32,16 @@ module.exports = class Game {
         return JSON.stringify(this.cleaned)
     }
 
+    get playing_positions() {
+        let res = []
+        for (let i = 0; i < this.names.length; ++i) {
+            if (this.names[i].playing) {
+                res.push(i)
+            }
+        }
+        return res
+    }
+
     add_name(name, playing = true) {
         if (this.names.find(el => el.name === name) != undefined) {
             return undefined
