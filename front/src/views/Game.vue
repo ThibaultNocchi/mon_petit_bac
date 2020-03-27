@@ -51,19 +51,31 @@
         <v-divider></v-divider>
       </template>
 
-      <v-list nav dense>
+      <!-- <v-list nav dense>
         <v-list-item
           dense
           v-for="(msg, idx) in $store.state.userMessages.slice().reverse()"
           :key="idx"
-          class="chatMsg"
         >
           <v-list-item-content>
             <v-list-item-title v-text="msg.message"></v-list-item-title>
             <v-list-item-subtitle v-text="msg.sender"></v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-      </v-list>
+      </v-list> -->
+      <v-row
+        dense
+        class="mx-4 my-3"
+        no-gutters
+        v-for="(msg, idx) in $store.state.userMessages.slice().reverse()"
+        :key="idx"
+      >
+        <v-col cols="9" class="text-left" v-text="msg.message"></v-col>
+        <v-col cols="3" class="text-right font-italic caption">
+          <span v-text="msg.sender"></span><br />
+          <span v-text="msg.time"></span>
+        </v-col>
+      </v-row>
 
       <template v-slot:append>
         <v-divider></v-divider>
