@@ -5,7 +5,7 @@
       justify="center"
       v-if="$store.state.game.user_id === 0"
     >
-      <v-col cols="12" sm="8" md="4">
+      <v-col cols="12" sm="10" lg="6">
         <v-card>
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Add categories</v-toolbar-title>

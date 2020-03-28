@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer stateless app v-model="drawer">
+    <v-navigation-drawer app v-model="drawer">
       <template v-slot:prepend>
         <v-list nav>
           <div v-if="$store.state.game.game_phase !== 0">
@@ -51,18 +51,6 @@
         <v-divider></v-divider>
       </template>
 
-      <!-- <v-list nav dense>
-        <v-list-item
-          dense
-          v-for="(msg, idx) in $store.state.userMessages.slice().reverse()"
-          :key="idx"
-        >
-          <v-list-item-content>
-            <v-list-item-title v-text="msg.message"></v-list-item-title>
-            <v-list-item-subtitle v-text="msg.sender"></v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list> -->
       <v-row
         dense
         class="mx-4 my-3"
@@ -122,7 +110,7 @@
     </v-navigation-drawer>
 
     <v-app-bar app collapse-on-scroll color="blue-grey lighten-2" dense dark>
-      <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon> -->
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Mon Petit Bac</v-toolbar-title>
     </v-app-bar>
 

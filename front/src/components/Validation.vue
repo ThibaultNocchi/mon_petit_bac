@@ -9,9 +9,10 @@
         <v-subheader>{{ player.name }}</v-subheader>
       </v-col>
       <v-col
-        cols="6"
-        sm="4"
-        md="3"
+        cols="12"
+        sm="6"
+        md="4"
+        xl="3"
         v-for="(cat, idx2) in $store.state.game.cats"
         :key="idx2"
       >

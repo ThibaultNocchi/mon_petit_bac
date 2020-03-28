@@ -1,5 +1,12 @@
 <template>
   <div>
+    <v-row class="mb-4">
+      <v-col cols="12" sm="6" md="4">
+        <h3 class="text-left">
+          Letter: {{ $store.state.game.current_letter }}
+        </h3>
+      </v-col>
+    </v-row>
     <v-row dense>
       <v-col
         cols="12"
