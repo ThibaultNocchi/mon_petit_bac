@@ -6,9 +6,16 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
+    path: "/login",
     name: "Login",
+    alias: "/",
     component: Login
+  },
+  {
+    path: "/login/:urlGameId",
+    name: "LoginParam",
+    component: Login,
+    props: true
   },
   {
     path: "/game",

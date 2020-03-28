@@ -140,6 +140,7 @@
 
 <script>
 export default {
+  props: ["urlGameId"],
   data() {
     return {
       gameId: "",
@@ -147,6 +148,11 @@ export default {
       connectForm: true,
       gameIdFilled: false
     };
+  },
+  beforeMount() {
+    if (this.urlGameId !== undefined) {
+      this.gameId = this.urlGameId;
+    }
   },
   methods: {
     joinGame() {
