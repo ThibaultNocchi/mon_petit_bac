@@ -22,3 +22,6 @@ If you changed the backend port, you can change specify it in `src/main.js`:
 ```javascript
 let socketUrl = "ws://" + window.location.hostname + ":8081";
 ```
+
+### Attributions
+Pen icon in the logo made by Icongeek26 from www.flaticon.com
