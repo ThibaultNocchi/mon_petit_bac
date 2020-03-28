@@ -43,20 +43,19 @@
         </v-text-field>
       </v-col>
     </v-row>
-    <v-btn
-      fab
-      fixed
-      bottom
-      right
-      color="primary"
-      large
-      :loading="$store.state.socket.loading"
-      class="ma-4"
-      @click="validate_end"
-      v-if="$store.state.game.user_id === 0"
-    >
-      <v-icon>mdi-check</v-icon>
-    </v-btn>
+    <v-row v-if="$store.state.game.user_id === 0">
+      <v-spacer></v-spacer>
+      <v-btn
+        fab
+        color="primary"
+        large
+        :loading="$store.state.socket.loading"
+        class="ma-4"
+        @click="validate_end"
+      >
+        <v-icon>mdi-check</v-icon>
+      </v-btn>
+    </v-row>
   </div>
 </template>
 
