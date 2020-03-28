@@ -92,6 +92,11 @@
               <v-list-item-title>{{ $store.state.game.id }}</v-list-item-title>
               <v-list-item-subtitle>Game ID</v-list-item-subtitle>
             </v-list-item-content>
+            <v-list-item-action>
+              <v-btn icon @click="shareUrl">
+                <v-icon>mdi-share-variant</v-icon>
+              </v-btn>
+            </v-list-item-action>
           </v-list-item>
           <v-list-item>
             <v-list-item-icon>
@@ -108,6 +113,19 @@
         </v-list>
       </template>
     </v-navigation-drawer>
+
+    <v-snackbar color="green" class="text-center" v-model="copyUrlSuccess">
+      Copied!
+      <v-btn text @click="copyUrlSuccess = false">
+        Close
+      </v-btn>
+    </v-snackbar>
+    <v-snackbar color="red" v-model="copyUrlError">
+      Copy failure, please manually share the game ID
+      <v-btn text @click="copyUrlError = false">
+        Close
+      </v-btn>
+    </v-snackbar>
 
     <v-app-bar app collapse-on-scroll color="blue-grey lighten-2" dense dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
@@ -148,7 +166,7 @@ export default {
     WaitingScreen
   },
   data() {
-    return { drawer: true };
+    return { drawer: true, copyUrlSuccess: false, copyUrlError: false };
   },
   mounted() {
     if (this.$store.state.game === undefined) {
@@ -200,6 +218,17 @@ export default {
         data: { game_id: this.$store.state.game.id, message: this.chatMsg }
       };
       this.$store.dispatch("sendMessage", obj);
+    },
+    shareUrl() {
+      let url = window.location.origin + "/login/" + this.$store.state.game.id;
+      this.$copyText(url).then(
+        () => {
+          this.copyUrlSuccess = true;
+        },
+        () => {
+          this.copyUrlError = true;
+        }
+      );
     }
   }
 };
