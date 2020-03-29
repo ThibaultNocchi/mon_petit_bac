@@ -1,22 +1,14 @@
 module.exports = class Game {
 
-    id = ""
     /**
-     * Number representing the game phase
+     * 'game_phase' values:
      * 0 : game creation and login
      * 1 : main game phase (answering)
      * 2 : first person finished, gathering all answers
      * 3 : game master validating answers
      */
-    game_phase = 0
-    names = []
-    scores = []
-    cats = []
-    current_round = []
-    current_letter = ''
-    latest_letters = []
 
-    constructor(options = { id: "test", game_phase: 0, names: [], scores: [], cats: [], current_round: [], current_letter: '' }) {
+    constructor(options = { id: "test", game_phase: 0, names: [], scores: [], cats: [], current_round: [], current_letter: '', latest_letters: [] }) {
         Object.assign(this, options)
     }
 
