@@ -23,5 +23,7 @@ If you changed the backend port, you can change specify it in `src/main.js`:
 let socketUrl = "ws://" + window.location.hostname + ":8081";
 ```
 
+You can now open `http://localhost:8080` or whatever adress and port you set to reach the application
+
 ### Attributions
 Pen icon in the logo made by Icongeek26 from www.flaticon.com
