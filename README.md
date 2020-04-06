@@ -1,5 +1,7 @@
 # Mon Petit Bac
 
+![Mon Petit Bac logo](./logo.svg)
+
 "Mon Petit Bac" is a categories game made in Node, Vue.js and with websockets.
 
 ## Deployment
