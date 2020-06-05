@@ -14,7 +14,6 @@ let socketUrl =
   process.env.VUE_APP_BACK_HOST === undefined
     ? DEFAULT_URL
     : process.env.VUE_APP_BACK_HOST;
-console.log("Connecting to backend at " + socketUrl);
 
 Vue.use(VueNativeSock, socketUrl, {
   store: store
