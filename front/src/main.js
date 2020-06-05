@@ -8,7 +8,14 @@ import VueClipboard from "vue-clipboard2";
 
 Vue.config.productionTip = false;
 
-let socketUrl = "ws://" + window.location.hostname + ":8081";
+let DEFAULT_URL = "ws://" + window.location.hostname + ":8081";
+
+let socketUrl =
+  process.env.VUE_APP_BACK_HOST === undefined
+    ? DEFAULT_URL
+    : process.env.VUE_APP_BACK_HOST;
+console.log("Connecting to backend at " + socketUrl);
+
 Vue.use(VueNativeSock, socketUrl, {
   store: store
 });
