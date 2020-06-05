@@ -15,10 +15,7 @@ You'll need to have `node` and `npm` installed on your machine. Then, clone the 
 ### Backend
 Go into the `back` folder, and do `npm install`. Wait for it to complete, and then you can run `node index.js`.
 
-You can change the server port by editing this line in `index.js`:
-```javascript
-const wss = new WebSocket.Server({ port: 8081 })
-```
+Default port is `8081`, but you can call `node index.js -p PORT_NUMBER` to specify a port.
 Note that you'll then have to change the hardcoded server port in the frontend.
 
 ### Frontend

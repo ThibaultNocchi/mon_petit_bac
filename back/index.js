@@ -1,8 +1,23 @@
 const WebSocket = require('ws')
-
 const Actions = require('./actions')
 
-const wss = new WebSocket.Server({ port: 8081 })
+const DEFAULT_PORT = 8081
+
+let argv = require('minimist')(process.argv.slice(2))
+
+if (argv.h !== undefined) {
+    console.log('-h: prints help')
+    console.log('-p PORT: sets server on PORT')
+    return
+}
+
+port = DEFAULT_PORT
+if (argv.p !== undefined) {
+    port = argv.p
+}
+
+const wss = new WebSocket.Server({ port })
+console.log('Started websockets server on port ' + port)
 
 let message_parser = function (message, current_ws) {
 
