@@ -19,6 +19,13 @@ Go into the `back` folder, and do `npm install`. Wait for it to complete, and th
 Default port is `8081`, but you can call `node index.js -p PORT_NUMBER` to specify a port.
 Note that you'll then have to change the used server address in the backend.
 
+You can also specify a secure server by specifying the path to a cert and key file as is:
+`node index.js --cert /path/to/cert.pem --key /path/to/key.pem`
+
+Note that with a secure websocket server, the address starts with `wss://` instead of `ws://`.
+
+You can call `node index.js -h` to see these options.
+
 ### Frontend
 
 Go into the `front` folder, do `npm install` and `npx vue-cli-service build`. Launch the front HTTP server with `npx http-server dist/ -p 8080 --proxy "http://localhost:8080?"` (you can specify any port you want, but both in the -p and --proxy must match) or just put the `dist` folder behind any other HTTP server.

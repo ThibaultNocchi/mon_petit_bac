@@ -1,4 +1,6 @@
 const WebSocket = require('ws')
+const fs = require('fs');
+const https = require('https');
 const Actions = require('./actions')
 
 const DEFAULT_PORT = 8081
@@ -6,18 +8,31 @@ const DEFAULT_PORT = 8081
 let argv = require('minimist')(process.argv.slice(2))
 
 if (argv.h !== undefined) {
-    console.log('-h: prints help')
-    console.log('-p PORT: sets server on PORT')
+    console.log('-h - prints help')
+    console.log('-p PORT - sets server on PORT')
+    console.log('--cert /path/to/cert.pem - specify path to a cert, needs to be with a key')
+    console.log('--key /path/to/key.pem - specify path to a key, needs to be with a cert')
     return
 }
 
-port = DEFAULT_PORT
+let params = { port: DEFAULT_PORT }
+
 if (argv.p !== undefined) {
-    port = argv.p
+    params.port = argv.p
 }
 
-const wss = new WebSocket.Server({ port })
-console.log('Started websockets server on port ' + port)
+
+if (argv.cert !== undefined && argv.key !== undefined) {
+    const server = https.createServer({
+        cert: fs.readFileSync(argv.cert),
+        key: fs.readFileSync(argv.key)
+    });
+    params['server'] = server
+}
+
+
+const wss = new WebSocket.Server(params)
+console.log('Started websockets server on port ' + params.port)
 
 let message_parser = function (message, current_ws) {
 
