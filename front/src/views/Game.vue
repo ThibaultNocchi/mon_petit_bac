@@ -130,6 +130,21 @@
     <v-app-bar app collapse-on-scroll color="blue-grey lighten-2" dense dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Mon Petit Bac</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            icon
+            href="https://github.com/ThibaultNocchi/mon_petit_bac"
+            target="_blank"
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-github</v-icon>
+          </v-btn>
+        </template>
+        <span>Source code on Github</span>
+      </v-tooltip>
     </v-app-bar>
 
     <v-content class="ma-3">
