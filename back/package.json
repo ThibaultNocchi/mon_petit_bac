@@ -12,9 +12,9 @@
     "supervisor": "^0.12.0"
   },
   "dependencies": {
-    "lokijs": "^1.5.8",
+    "lokijs": "^1.5.9",
     "minimist": "^1.2.5",
     "randomstring": "^1.1.5",
-    "ws": "^7.2.3"
+    "ws": "^7.3.1"
   }
 }
