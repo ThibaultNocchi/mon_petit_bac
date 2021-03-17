@@ -31,15 +31,16 @@ You can call `node index.js -h` to see these options.
 Go into the `front` folder, do `npm install` and `npx vue-cli-service build`. Launch the front HTTP server with `npx http-server dist/ -p 8080 --proxy "http://localhost:8080?"` (you can specify any port you want, but both in the -p and --proxy must match) or just put the `dist` folder behind any other HTTP server.
 
 By default, the client will try to reach the backend at `ws://HOST:8081` where `HOST` is the URL of the client.
-If reaching the client at `example.com`, by defaut it will try reaching `ws://example.com:8081`.
+If reaching the client at `example.com`, by default it will try reaching `ws://example.com:8081`.
 
 To change the URL and / or port of the backend, add a `.env.local` in the `front` folder with the path to the backend:
 
 ```
 VUE_APP_BACK_HOST=ws://backend.example.com:9000
 ```
+It is also possible to just set the `VUE_APP_BACK_HOST` environment variable while building.
 
-You can now open `http://localhost:8080` or whatever adress and port you set to reach the application
+You can now open `http://localhost:8080` or whatever address and port you set to reach the application
 
 ### Attributions
 
