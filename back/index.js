@@ -57,28 +57,7 @@ let message_parser = function (message, current_ws) {
         }
 
         let action = msg.action
-
-        if (action === 'create') {
-            Actions.create(current_ws, msg.data)
-        } else if (action === 'connect') {
-            Actions.connect(current_ws, msg.data)
-        } else if (action === 'register_cat') {
-            Actions.register_cat(current_ws, msg.data)
-        } else if (action === 'start_game') {
-            Actions.start_game(current_ws, msg.data)
-        } else if (action === 'first') {
-            Actions.first(current_ws, msg.data)
-        } else if (action === 'gather') {
-            Actions.gather(current_ws, msg.data)
-        } else if (action === 'validate') {
-            Actions.validate(current_ws, msg.data)
-        } else if (action === 'end_round') {
-            Actions.end_round(current_ws, msg.data)
-        } else if (action === 'message') {
-            Actions.message(current_ws, msg.data)
-        } else {
-            throw 'unrecognized_action'
-        }
+        Actions[action](current_ws, msg.data)
 
     } catch (error) {
         current_ws.send(JSON.stringify({ type: "error", error }))
