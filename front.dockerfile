@@ -3,7 +3,7 @@ FROM node:lts-alpine as build
 ARG VUE_APP_BACK_HOST
 ENV VUE_APP_BACK_HOST=$VUE_APP_BACK_HOST
 
-RUN apk add --no-cache python make g++
+RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 COPY ./front .
