@@ -1,4 +1,4 @@
-FROM node:lts-alpine as build
+FROM node:16-alpine as build
 
 ARG VUE_APP_BACK_HOST
 ENV VUE_APP_BACK_HOST=$VUE_APP_BACK_HOST
